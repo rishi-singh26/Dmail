@@ -1,3 +1,5 @@
+import 'package:dmail/components/emails.dart';
+import 'package:dmail/components/mail_boxes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
@@ -11,7 +13,7 @@ void main() {
     appWindow.minSize = minimumSize;
     appWindow.size = initialSize;
     appWindow.alignment = Alignment.center;
-    appWindow.title = 'File Crypt';
+    appWindow.title = 'Dmail';
     appWindow.show();
   });
 }
@@ -22,7 +24,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'File Crypt',
+      title: 'Dmail',
       theme: ThemeData(
         useMaterial3: true,
         primaryColor: const Color(0xFF3161FF),
@@ -30,7 +32,7 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData.dark(
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'File Crypt'),
+      home: const MyHomePage(title: 'Dmail'),
     );
   }
 }
@@ -56,27 +58,20 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               const IconButton(
                 onPressed: null,
-                // icon: Icon(CupertinoIcons.doc_text),
-                icon: Icon(CupertinoIcons.folder),
-                // icon: Icon(CupertinoIcons.tray_fill),
+                icon: Icon(CupertinoIcons.mail_solid),
               ),
-              const Text('File Crypt'),
+              const Text('Dmail'),
               Expanded(child: MoveWindow()),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.chevron_left),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.chevron_right),
-              ),
               const WindowButtons(),
             ],
           ),
         ),
       ),
-      body: const Center(
-        child: Text('Dmail'),
+      body: Row(
+        children: const [
+          MailBoxes(),
+          Emails(),
+        ],
       ),
     );
   }
