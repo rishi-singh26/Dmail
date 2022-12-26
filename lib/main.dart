@@ -4,8 +4,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 
-void main() {
-  runApp(const MyApp());
+// Redux
+import 'package:dmail/redux/combined_store.dart';
+import 'package:dmail/redux/store/app.state.dart';
+import 'package:redux/redux.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+
+void main() async {
+  runApp(MyApp(store: await AppStore.getAppStore()));
 
   doWhenWindowReady(() {
     const initialSize = Size(800, 650);
@@ -19,20 +25,24 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Store<AppState> store;
+  const MyApp({Key? key, required this.store}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Dmail',
-      theme: ThemeData(
-        useMaterial3: true,
-        primaryColor: const Color(0xFF3161FF),
+    return StoreProvider(
+      store: store,
+      child: MaterialApp(
+        title: 'Dmail',
+        theme: ThemeData(
+          useMaterial3: true,
+          primaryColor: const Color(0xFF3161FF),
+        ),
+        darkTheme: ThemeData.dark(
+          useMaterial3: true,
+        ),
+        home: const MyHomePage(title: 'Dmail'),
       ),
-      darkTheme: ThemeData.dark(
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Dmail'),
     );
   }
 }
