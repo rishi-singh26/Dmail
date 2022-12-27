@@ -23,7 +23,7 @@ class MailBoxState {
   }
 
   MailBoxState.fromJson(json)
-      : mailBox = _formArrayStringJsonToList(json['subUsers']);
+      : mailBox = _formArrayStringJsonToList(json['mailBox']);
 
   Map<String, dynamic> toJson() => {
         'mailBox': mailBox,

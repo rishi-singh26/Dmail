@@ -1,34 +1,47 @@
+import 'dart:convert';
+
 import 'package:dmail/models/mailbox_model.dart';
 import 'package:dmail/redux/mailboxes/mailbox_action.dart';
 import 'package:dmail/redux/store/app.state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:http/http.dart';
 
 class MailBoxes extends StatefulWidget {
-  const MailBoxes({Key? key}) : super(key: key);
+  final Function(MailBox) setSelectedMailBox;
+  final MailBox selectedMailBox;
+  const MailBoxes({
+    Key? key,
+    required this.setSelectedMailBox,
+    required this.selectedMailBox,
+  }) : super(key: key);
 
   @override
   State<MailBoxes> createState() => _MailBoxesState();
 }
 
 class _MailBoxesState extends State<MailBoxes> {
-  final TextEditingController addMailBoxController = TextEditingController();
-
-  @override
-  void initState() {
-    addMailBoxController.addListener(() => setState(() {}));
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    addMailBoxController.dispose();
-    super.dispose();
-  }
-
-  _addEmail() {
-    String email = 'khankumar@1secmail.com';
+  _addEmail() async {
+    // https://www.1secmail.com/api/v1/?action=genRandomMailbox&count=10
+    var httpsUri = Uri(
+      scheme: 'https',
+      host: 'www.1secmail.com',
+      path: '/api/v1/',
+      queryParameters: {
+        'action': 'genRandomMailbox',
+        'count': '1',
+      },
+    );
+    String email = '';
+    Response res = await get(httpsUri);
+    if (res.statusCode == 200) {
+      List<dynamic> emailData = jsonDecode(res.body);
+      email = emailData[0];
+    } else {
+      return;
+    }
+    // ignore: use_build_context_synchronously
     StoreProvider.of<AppState>(context).dispatch(
       AddMailBoxAction(
         newMailBox: MailBox(
@@ -38,6 +51,15 @@ class _MailBoxesState extends State<MailBoxes> {
           name: email.split('@')[0],
         ),
       ),
+    );
+  }
+
+  _deleteMail(int mailBoxLength, bool isSelected, int index) {
+    if (mailBoxLength == 1 || isSelected) {
+      widget.setSelectedMailBox(MailBox.initialState());
+    }
+    StoreProvider.of<AppState>(context).dispatch(
+      RemoveMailBoxAction(index: index),
     );
   }
 
@@ -73,18 +95,25 @@ class _MailBoxesState extends State<MailBoxes> {
                   itemCount: state.mailBox.mailBox.length,
                   itemBuilder: (context, index) {
                     MailBox mailBox = state.mailBox.mailBox[index];
+                    bool isSelected =
+                        widget.selectedMailBox.email == mailBox.email;
                     return ListTile(
                       title: Text(mailBox.email),
                       dense: true,
-                      onTap: (() {}),
-                      trailing: IconButton(
-                        onPressed: () {
-                          StoreProvider.of<AppState>(context).dispatch(
-                            RemoveMailBoxAction(index: index),
-                          );
-                        },
-                        icon: const Icon(CupertinoIcons.trash, size: 15),
-                      ),
+                      onTap: (() {
+                        widget.setSelectedMailBox(mailBox);
+                      }),
+                      selected: isSelected,
+                      trailing: isSelected
+                          ? IconButton(
+                              onPressed: () => _deleteMail(
+                                state.mailBox.mailBox.length,
+                                isSelected,
+                                index,
+                              ),
+                              icon: const Icon(CupertinoIcons.trash, size: 15),
+                            )
+                          : null,
                     );
                   },
                 ),
