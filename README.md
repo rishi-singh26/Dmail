@@ -1,16 +1,10 @@
 # dmail
 
-A new Flutter project.
+Disposiable email service
 
-## Getting Started
+## API Details
 
-This project is a starting point for a Flutter application.
+This project is developed using the [1secmail](https://www.1secmail.com/api) API
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+User can create as many disposable emails as wanted.
+Emails are deleted within 1 hour after receive time.
